@@ -40,11 +40,20 @@ Aplicação web mobile-friendly para gerenciamento de tópicos com pesquisa no G
 2. **Upload dos arquivos**
 3. **Conecte com Vercel**
 
-### ⚠️ CORREÇÃO APLICADA:
+### ⚠️ CORREÇÕES APLICADAS (v2):
 - **Problema:** Erro "tópico não encontrado" ao deletar
-- **Solução:** Consolidado todas as operações em uma única função API
-- **Sistema de IDs:** Melhorado para persistir corretamente
-- **Logs:** Adicionados para debugging no Vercel
+- **Causa:** Inconsistência entre tipos de ID (string vs number)
+- **Solução:** 
+  - IDs baseados em timestamp para garantir unicidade
+  - Comparação de strings para compatibilidade total
+  - Logs detalhados para debugging
+- **Função debug:** `/api/debug` para investigar problemas
+
+### 🔧 Para Debug no Vercel:
+Acesse `https://seu-app.vercel.app/api/debug` para ver:
+- Conteúdo do arquivo de dados
+- IDs e tipos de dados
+- Status do sistema de arquivos
 
 ## Estrutura do Projeto
 

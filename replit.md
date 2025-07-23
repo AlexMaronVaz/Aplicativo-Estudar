@@ -2,7 +2,19 @@
 
 ## Overview
 
-This is a full-stack React application built with a TypeScript Express backend and React frontend. The application appears to be a topic management system that allows users to create, view, and delete topics. It uses a modern tech stack with Drizzle ORM for database operations, shadcn/ui for UI components, and TanStack Query for state management.
+This is a full-stack React application built with a TypeScript Express backend and React frontend. The application is a topic management system that allows users to create, view, and delete topics in Portuguese. It uses a modern tech stack with Drizzle ORM for database operations, shadcn/ui for UI components, and TanStack Query for state management.
+
+## Recent Changes (January 2025)
+
+### v2 - Fixed Delete Operation Issues
+- **Problem Identified**: DELETE operations were returning 404 "Tópico não encontrado" on Vercel
+- **Root Cause**: ID type inconsistency between PostgreSQL (numbers) and file storage (strings)
+- **Solutions Applied**:
+  - Changed IDs to timestamp-based for guaranteed uniqueness
+  - Added string comparison for cross-platform compatibility
+  - Enhanced logging for debugging in production
+  - Created debug endpoint (/api/debug) for troubleshooting
+  - Added dual DELETE route support (path params + query params)
 
 ## User Preferences
 

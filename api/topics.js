@@ -51,7 +51,9 @@ class FileStorage {
 
   async createTopic(insertTopic) {
     const topics = await this.loadFromFile();
-    const newId = topics.length > 0 ? Math.max(...topics.map(t => t.id)) + 1 : 1;
+    
+    // Usar timestamp como ID para garantir unicidade
+    const newId = Date.now();
     
     const topic = {
       id: newId,
@@ -61,22 +63,26 @@ class FileStorage {
     topics.unshift(topic); // Adicionar no início para mostrar mais recentes primeiro
     await this.saveToFile(topics);
     
+    console.log('✅ Tópico criado:', topic);
     return topic;
   }
 
   async deleteTopic(id) {
     const topics = await this.loadFromFile();
-    console.log(`Deletando tópico ${id}. Tópicos atuais:`, topics.map(t => ({id: t.id, text: t.text.substring(0, 20)})));
+    console.log(`🔍 Tentando deletar ID: ${id} (tipo: ${typeof id})`);
+    console.log(`📋 Tópicos disponíveis:`, topics.map(t => ({id: t.id, tipo: typeof t.id, text: t.text.substring(0, 20)})));
     
+    // Converter ambos para string para comparação
+    const targetId = String(id);
     const initialLength = topics.length;
-    const filteredTopics = topics.filter(topic => topic.id !== id);
+    const filteredTopics = topics.filter(topic => String(topic.id) !== targetId);
     
     if (filteredTopics.length < initialLength) {
       await this.saveToFile(filteredTopics);
-      console.log(`Tópico ${id} deletado com sucesso. Restantes:`, filteredTopics.length);
+      console.log(`✅ Tópico ${id} deletado com sucesso. Restantes: ${filteredTopics.length}`);
       return true;
     }
-    console.log(`Tópico ${id} não encontrado. IDs disponíveis:`, topics.map(t => t.id));
+    console.log(`❌ Tópico ${id} não encontrado. IDs disponíveis:`, topics.map(t => String(t.id)));
     return false;
   }
 }
