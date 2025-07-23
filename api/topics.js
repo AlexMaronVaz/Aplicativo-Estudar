@@ -116,30 +116,33 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'DELETE') {
-      // Extrair ID da URL - suporta tanto /api/topics?id=1 quanto /api/topics/1
-      let topicId;
+      const { id } = req.query;
       
-      if (req.query.id) {
-        topicId = parseInt(req.query.id);
-      } else {
-        // Extrair ID da URL path: /api/topics/123
-        const urlParts = req.url.split('/');
-        const lastPart = urlParts[urlParts.length - 1];
-        topicId = parseInt(lastPart);
-      }
+      console.log('=== DELETE DEBUG ===');
+      console.log('URL completa:', req.url);
+      console.log('Query params:', req.query);
+      console.log('ID recebido:', id);
       
-      console.log('DELETE request - URL:', req.url);
-      console.log('DELETE request - Query:', req.query);
-      console.log('DELETE request - Extracted ID:', topicId);
+      const topicId = parseInt(id);
       
       if (isNaN(topicId)) {
+        console.log('❌ ID inválido:', id);
         return res.status(400).json({ message: "ID inválido" });
       }
 
+      console.log('🔍 Tentando deletar ID:', topicId);
+      
+      // Debug: mostrar todos os tópicos antes de deletar
+      const allTopics = await storage.getTopics();
+      console.log('📋 Tópicos disponíveis:', allTopics.map(t => `ID:${t.id} - ${t.text.substring(0, 30)}`));
+      
       const deleted = await storage.deleteTopic(topicId);
+      
       if (deleted) {
+        console.log('✅ Tópico deletado com sucesso');
         return res.status(200).json({ message: "Tópico removido com sucesso" });
       } else {
+        console.log('❌ Tópico não encontrado para deletar');
         return res.status(404).json({ message: "Tópico não encontrado" });
       }
     }

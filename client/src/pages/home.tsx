@@ -43,7 +43,7 @@ export default function Home() {
   // Delete topic mutation
   const deleteTopicMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest("DELETE", `/api/topics/${id}`);
+      await apiRequest("DELETE", `/api/topics?id=${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/topics"] });

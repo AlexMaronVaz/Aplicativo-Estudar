@@ -35,13 +35,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Delete a topic
+  // Delete a topic - support both path param and query param
   app.delete("/api/topics/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
         return res.status(400).json({ message: "ID inválido" });
       }
+
+      const deleted = await storage.deleteTopic(id);
+      if (deleted) {
+        res.json({ message: "Tópico removido com sucesso" });
+      } else {
+        res.status(404).json({ message: "Tópico não encontrado" });
+      }
+    } catch (error) {
+      console.error("Error deleting topic:", error);
+      res.status(500).json({ message: "Erro ao remover tópico" });
+    }
+  });
+
+  // Delete a topic via query parameter (for Vercel compatibility)
+  app.delete("/api/topics", async (req, res) => {
+    try {
+      const id = parseInt(req.query.id as string);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "ID inválido" });
+      }
+
+      console.log('=== BACKEND DELETE DEBUG ===');
+      console.log('Query ID:', req.query.id);
+      console.log('Parsed ID:', id);
 
       const deleted = await storage.deleteTopic(id);
       if (deleted) {
