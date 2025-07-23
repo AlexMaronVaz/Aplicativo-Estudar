@@ -1,6 +1,4 @@
-import { topics, type Topic, type InsertTopic } from "@shared/schema";
-import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { type Topic, type InsertTopic } from "@shared/schema";
 import fs from "fs/promises";
 import path from "path";
 
@@ -10,38 +8,15 @@ export interface IStorage {
   deleteTopic(id: number): Promise<boolean>;
 }
 
-export class DatabaseStorage implements IStorage {
-  async getTopics(): Promise<Topic[]> {
-    const result = await db.select().from(topics).orderBy(topics.id);
-    return result.reverse(); // Show newest first
-  }
-
-  async createTopic(insertTopic: InsertTopic): Promise<Topic> {
-    const [topic] = await db
-      .insert(topics)
-      .values(insertTopic)
-      .returning();
-    return topic;
-  }
-
-  async deleteTopic(id: number): Promise<boolean> {
-    const result = await db
-      .delete(topics)
-      .where(eq(topics.id, id))
-      .returning();
-    return result.length > 0;
-  }
-}
+// Removido DatabaseStorage - agora usando apenas FileStorage
 
 export class FileStorage implements IStorage {
   private filePath: string;
   private topics: Map<number, Topic>;
-  private currentId: number;
 
   constructor() {
     this.filePath = path.resolve(process.cwd(), "topics.txt");
     this.topics = new Map();
-    this.currentId = 1;
     this.initializeStorage();
   }
 
@@ -60,27 +35,29 @@ export class FileStorage implements IStorage {
       const lines = data.split("\n").filter(line => line.trim());
       
       this.topics.clear();
-      this.currentId = 1;
 
       for (const line of lines) {
         if (line.trim()) {
-          const topic: Topic = {
-            id: this.currentId++,
-            text: line.trim(),
-          };
-          this.topics.set(topic.id, topic);
+          try {
+            // Tenta carregar como JSON (formato novo)
+            const topic = JSON.parse(line.trim());
+            this.topics.set(topic.id, topic);
+          } catch (parseError) {
+            // Compatibilidade: trata como texto simples
+            const id = Date.now() + Math.random() * 1000;
+            this.topics.set(id, { id, text: line.trim() });
+          }
         }
       }
     } catch (error) {
-      // File doesn't exist or is empty
+      // Arquivo não existe
       this.topics.clear();
-      this.currentId = 1;
     }
   }
 
   private async saveToFile() {
     const lines = Array.from(this.topics.values())
-      .map(topic => topic.text)
+      .map(topic => JSON.stringify(topic))
       .join("\n");
     
     await fs.writeFile(this.filePath, lines, "utf-8");
@@ -93,23 +70,30 @@ export class FileStorage implements IStorage {
 
   async createTopic(insertTopic: InsertTopic): Promise<Topic> {
     const topic: Topic = {
-      id: this.currentId++,
+      id: Date.now(), // Usar timestamp para garantir unicidade
       text: insertTopic.text.trim(),
     };
     
     this.topics.set(topic.id, topic);
     await this.saveToFile();
     
+    console.log('✅ Tópico criado:', topic);
     return topic;
   }
 
   async deleteTopic(id: number): Promise<boolean> {
+    console.log(`🔍 Tentando deletar ID: ${id} (tipo: ${typeof id})`);
+    console.log(`📋 Tópicos disponíveis:`, Array.from(this.topics.keys()));
+    
     const deleted = this.topics.delete(id);
     if (deleted) {
       await this.saveToFile();
+      console.log(`✅ Tópico ${id} deletado com sucesso`);
+    } else {
+      console.log(`❌ Tópico ${id} não encontrado`);
     }
     return deleted;
   }
 }
 
-export const storage = new DatabaseStorage();
+export const storage = new FileStorage();

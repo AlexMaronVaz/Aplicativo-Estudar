@@ -1,2 +1,2 @@
-Socialismo
-Capitalismo
+{"id":1753307388401.2036,"text":"Socialismo"}
+{"id":1753307388330.1304,"text":"Capitalismo"}

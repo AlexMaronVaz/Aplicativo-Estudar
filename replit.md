@@ -6,15 +6,17 @@ This is a full-stack React application built with a TypeScript Express backend a
 
 ## Recent Changes (January 2025)
 
-### v2 - Fixed Delete Operation Issues
-- **Problem Identified**: DELETE operations were returning 404 "Tópico não encontrado" on Vercel
-- **Root Cause**: ID type inconsistency between PostgreSQL (numbers) and file storage (strings)
-- **Solutions Applied**:
-  - Changed IDs to timestamp-based for guaranteed uniqueness
-  - Added string comparison for cross-platform compatibility
-  - Enhanced logging for debugging in production
-  - Created debug endpoint (/api/debug) for troubleshooting
-  - Added dual DELETE route support (path params + query params)
+### v3 - Simplified to File-Only Storage (FINAL VERSION)
+- **Major Change**: Completely removed PostgreSQL and Drizzle ORM
+- **New Architecture**: 100% file-based storage using JSON format
+- **Benefits**:
+  - Zero database configuration required
+  - Faster and simpler Vercel deployment
+  - Consistent behavior between local and production
+  - Timestamp-based IDs for guaranteed uniqueness
+  - Enhanced debugging with detailed logs
+- **Storage Format**: Each line in topics.txt is a JSON object: `{"id":timestamp,"text":"content"}`
+- **Backward Compatibility**: Handles both old plain text and new JSON formats
 
 ## User Preferences
 
@@ -52,9 +54,10 @@ The application follows a monorepo pattern with three main directories:
 - **Validation**: Zod schemas for runtime validation with 1-500 character limits for topic text
 
 ### Storage Layer
-- **FileStorage**: Fallback file-based storage implementation for development
-- **Interface**: IStorage interface allows switching between storage implementations
-- **Future Database**: Configured for PostgreSQL with Drizzle but includes file storage as backup
+- **FileStorage**: Primary and only storage implementation
+- **Format**: JSON objects stored line-by-line in topics.txt
+- **Interface**: IStorage interface maintained for future extensibility
+- **No Database**: Completely removed PostgreSQL, Drizzle, and all database dependencies
 
 ### API Endpoints
 - `GET /api/topics` - Retrieve all topics

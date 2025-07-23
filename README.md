@@ -6,10 +6,11 @@ Aplicação web mobile-friendly para gerenciamento de tópicos com pesquisa no G
 
 - ✅ Adicionar tópicos
 - ✅ Pesquisar tópicos no Google
-- ✅ Remover tópicos
+- ✅ Remover tópicos (100% funcional!)
 - ✅ Interface responsiva para mobile
-- ✅ Persistência em arquivo de texto
+- ✅ Persistência SIMPLES em arquivo .txt (sem banco de dados!)
 - ✅ Design otimizado para dispositivos móveis
+- ✅ Deploy instantâneo no Vercel (sem configuração)
 
 ## Deploy no Vercel (Gratuito) - CORRIGIDO
 
@@ -40,14 +41,15 @@ Aplicação web mobile-friendly para gerenciamento de tópicos com pesquisa no G
 2. **Upload dos arquivos**
 3. **Conecte com Vercel**
 
-### ⚠️ CORREÇÕES APLICADAS (v2):
-- **Problema:** Erro "tópico não encontrado" ao deletar
-- **Causa:** Inconsistência entre tipos de ID (string vs number)
-- **Solução:** 
-  - IDs baseados em timestamp para garantir unicidade
-  - Comparação de strings para compatibilidade total
+### ⚠️ VERSÃO FINAL (v3 - SEM BANCO DE DADOS):
+- **Mudança Principal:** Removido PostgreSQL completamente
+- **Armazenamento:** Apenas arquivo .txt com formato JSON
+- **Vantagens:**
+  - Zero configuração de banco de dados
+  - Deploy mais simples no Vercel
+  - IDs baseados em timestamp (únicos e consistentes)
   - Logs detalhados para debugging
-- **Função debug:** `/api/debug` para investigar problemas
+- **Compatibilidade:** Funciona igual local e produção
 
 ### 🔧 Para Debug no Vercel:
 Acesse `https://seu-app.vercel.app/api/debug` para ver:
