@@ -11,38 +11,40 @@ Aplicação web mobile-friendly para gerenciamento de tópicos com pesquisa no G
 - ✅ Persistência em arquivo de texto
 - ✅ Design otimizado para dispositivos móveis
 
-## Deploy no Vercel (Gratuito)
+## Deploy no Vercel (Gratuito) - CORRIGIDO
 
-### Método 1: Deploy direto pelo Git
+### Arquivos Necessários para Upload:
+- `package.json` e `package-lock.json`
+- `vercel.json` (configuração corrigida)
+- `api/topics.js` (função serverless única)
+- Pasta `client/` completa (frontend)
+- `shared/schema.ts` (validação)
+- Arquivos de configuração: `tailwind.config.ts`, `vite.config.ts`, `tsconfig.json`, etc.
 
-1. **Conecte seu projeto ao GitHub:**
-   - Vá para [GitHub](https://github.com)
-   - Crie um novo repositório
-   - Faça upload dos arquivos do projeto
+### Método 1: Upload Direto (Mais Fácil)
+
+1. **Baixe o projeto:**
+   - No Replit: clique nos 3 pontinhos (⋯) → "Download as zip"
+   - Extraia o arquivo
 
 2. **Deploy no Vercel:**
    - Acesse [vercel.com](https://vercel.com)
    - Clique em "New Project"
-   - Conecte sua conta GitHub
-   - Selecione o repositório do projeto
+   - Escolha "Upload folder"
+   - Selecione a pasta extraída
    - Clique em "Deploy"
 
-### Método 2: Deploy via CLI
+### Método 2: Via GitHub
 
-1. **Instale o Vercel CLI:**
-   ```bash
-   npm i -g vercel
-   ```
+1. **Crie repositório no GitHub**
+2. **Upload dos arquivos**
+3. **Conecte com Vercel**
 
-2. **Faça login:**
-   ```bash
-   vercel login
-   ```
-
-3. **Deploy:**
-   ```bash
-   vercel
-   ```
+### ⚠️ CORREÇÃO APLICADA:
+- **Problema:** Erro "tópico não encontrado" ao deletar
+- **Solução:** Consolidado todas as operações em uma única função API
+- **Sistema de IDs:** Melhorado para persistir corretamente
+- **Logs:** Adicionados para debugging no Vercel
 
 ## Estrutura do Projeto
 
