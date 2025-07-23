@@ -7,6 +7,7 @@ This is a full-stack React application built with a TypeScript Express backend a
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Deployment preference: Free hosting solutions, specifically Vercel for permanent public access.
 
 ## System Architecture
 
@@ -93,13 +94,19 @@ The application follows a monorepo pattern with three main directories:
 - Production serves static files from Express
 
 ### Development vs Production
-- **Development**: Vite dev server with middleware mode, file-based storage fallback
-- **Production**: Express serves static React build, PostgreSQL database required
+- **Development**: Vite dev server with middleware mode, file-based storage
+- **Production**: Vercel serverless functions with static React build
 - Hot module replacement and error overlays in development
 - Request logging middleware for API debugging
 
 ### Database Setup
-- Drizzle migrations stored in `./migrations`
-- Schema defined in `./shared/schema.ts`
-- Push schema changes using `npm run db:push`
-- PostgreSQL dialect with connection via DATABASE_URL environment variable
+- File-based storage using .txt files for persistence
+- Schema defined in `./shared/schema.ts` with Zod validation
+- Storage interface allows easy switching between implementations
+- Vercel functions use `/tmp` directory for file storage
+
+### Deployment Configuration
+- **Vercel Setup**: `vercel.json` configured for serverless deployment
+- **API Functions**: Separate serverless functions in `api/` directory
+- **Build Process**: `vite build` generates static frontend assets
+- **Free Hosting**: Configured for Vercel's free tier with persistent file storage
