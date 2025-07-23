@@ -1,4 +1,6 @@
 import { topics, type Topic, type InsertTopic } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 import fs from "fs/promises";
 import path from "path";
 
@@ -6,6 +8,29 @@ export interface IStorage {
   getTopics(): Promise<Topic[]>;
   createTopic(topic: InsertTopic): Promise<Topic>;
   deleteTopic(id: number): Promise<boolean>;
+}
+
+export class DatabaseStorage implements IStorage {
+  async getTopics(): Promise<Topic[]> {
+    const result = await db.select().from(topics).orderBy(topics.id);
+    return result.reverse(); // Show newest first
+  }
+
+  async createTopic(insertTopic: InsertTopic): Promise<Topic> {
+    const [topic] = await db
+      .insert(topics)
+      .values(insertTopic)
+      .returning();
+    return topic;
+  }
+
+  async deleteTopic(id: number): Promise<boolean> {
+    const result = await db
+      .delete(topics)
+      .where(eq(topics.id, id))
+      .returning();
+    return result.length > 0;
+  }
 }
 
 export class FileStorage implements IStorage {
@@ -87,4 +112,4 @@ export class FileStorage implements IStorage {
   }
 }
 
-export const storage = new FileStorage();
+export const storage = new DatabaseStorage();
